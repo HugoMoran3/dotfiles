@@ -51,6 +51,7 @@ zinit snippet OMZP::command-not-found
 autoload -Uz compinit && compinit
 
 zinit cdreplay -q
+
 # Eza
 alias ld='eza -lD'
 alias lf='eza -lF --color=always | grep -v /'
@@ -59,12 +60,15 @@ alias ll='eza -al --group-directories-first'
 alias lt='eza -al --color=always --sort=size | grep -v /'
 alias ls='eza -al --sort=modified'
 
+# Pacman
+alias pacman='sudo pacman'
+
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 
 # Keybindings
-bindkey -e
+#bindkey -e
 bindkey '^p' history-search-backward
 bindkey '^n' history-search-forward
 bindkey '^[w' kill-region
@@ -91,5 +95,8 @@ zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'ls --color $realpath'
 
 # Shell integrations
 source <(fzf --zsh)
-#eval "$(zoxide init --cmd cd zsh)"
-eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+
+if command -v tmux &> /dev/null && [ -z "$TMUX" ]; then
+  tmux attach-session -t default || tmux new-session -s default
+fi
+
