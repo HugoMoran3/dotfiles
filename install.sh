@@ -38,9 +38,7 @@ tmux -V
 eza --version
 stow --version
 
-cd dotfiles/
 stow .
-cd ..
 
 zsh
 
