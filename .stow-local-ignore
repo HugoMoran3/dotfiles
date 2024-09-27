@@ -1,0 +1,14 @@
+# Ignore all bash files
+^.*\.sh
+
+# Ignore the install script specifically (if it's in the root of your dotfiles)
+^/?install\.sh
+
+# Ignore the README file if you have one
+^/?README.*
+
+# Ignore the .git directory
+\.git
+
+# Ignore the .stow-local-ignore file itself
+\.stow-local-ignore

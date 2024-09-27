@@ -38,6 +38,10 @@ tmux -V
 eza --version
 stow --version
 
+cd dotfiles/
+stow .
+cd ..
+
 # Install Nerd Fonts
 echo "Installing Nerd Fonts..."
 ./nerdfonts.sh
