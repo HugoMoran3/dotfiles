@@ -38,9 +38,22 @@ tmux -V
 eza --version
 stow --version
 
-stow .
+# Stow dotfiles
+echo "Stowing dotfiles..."
+echo "Current directory: $(pwd)"
+echo "Contents of current directory:"
+ls -la
 
-zsh
+echo "Running stow..."
+stow -v -n . # Dry run
+if [ $? -eq 0 ]; then
+    echo "Dry run successful. Proceeding with actual stow."
+    stow -v .
+    echo "Stow completed."
+else
+    echo "Dry run failed. Please check the output above for conflicts."
+    exit 1
+fi
 
 # Install Nerd Fonts
 echo "Installing Nerd Fonts..."
