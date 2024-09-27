@@ -38,20 +38,44 @@ tmux -V
 eza --version
 stow --version
 
+backup_file() {
+    if [ -e "$HOME/$1" ]; then
+        echo "Backing up existing $1"
+        mv "$HOME/$1" "$HOME/$1.backup.$(date +%Y%m%d%H%M%S)"
+    fi
+}
+
 # Stow dotfiles
 echo "Stowing dotfiles..."
 echo "Current directory: $(pwd)"
 echo "Contents of current directory:"
 ls -la
 
+echo "Backing up existing files if necessary..."
+backup_file ".zshrc"
+backup_file ".tmux.conf"
+backup_file ".config/nvim/init.vim"
+
 echo "Running stow..."
-stow -v -n . # Dry run
+
+# Stow zsh separately with --no-folding
+if [ -d "zsh" ]; then
+    echo "Stowing zsh files..."
+    stow --no-folding -v -t $HOME zsh
+    if [ $? -ne 0 ]; then
+        echo "Error occurred while stowing zsh files."
+        exit 1
+    fi
+fi
+
+# Stow all other dotfiles
+echo "Stowing other dotfiles..."
+stow -v -t $HOME $(ls -d */ | grep -v '^zsh/$')
+
 if [ $? -eq 0 ]; then
-    echo "Dry run successful. Proceeding with actual stow."
-    stow -v .
-    echo "Stow completed."
+    echo "Stow completed successfully."
 else
-    echo "Dry run failed. Please check the output above for conflicts."
+    echo "Error occurred during stow operation."
     exit 1
 fi
 
