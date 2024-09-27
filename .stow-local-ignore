@@ -5,7 +5,11 @@
 ^/?install\.sh
 
 # Ignore the README file if you have one
-^/?README.*
+^/README.*
+^/LICENSE.*
+^/COPYING
+^/install.sh 
+^/nerdfonts.sh
 
 # Ignore the .git directory
 \.git
