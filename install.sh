@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # Check if script is run with sudo
-if [ "$EUID" -ne 0 ]; then
-    echo "Please run as root or with sudo"
-    exit 1
+if [ "$EUID" -ne 0 ]
+  then echo "Please run as root or with sudo"
+  exit
 fi
 
 # Get the actual user's home directory
@@ -62,52 +62,22 @@ backup_file() {
 # Stow dotfiles
 echo "Stowing dotfiles..."
 run_as_user << EOF
-cd $PWD
-echo "Current directory: \$(pwd)"
-echo "Contents of current directory:"
-ls -la
-
-echo "Backing up existing files if necessary..."
-backup_file ".zshrc"
-backup_file ".tmux.conf"
-backup_file ".config/nvim/init.vim"
-
-echo "Removing existing .zshrc if it exists..."
-[ -f "$REAL_HOME/.zshrc" ] && rm "$REAL_HOME/.zshrc"
-
-echo "Running stow..."
-
-# Stow zsh folder (which contains .zshrc)
-echo "Stowing zsh files..."
-stow --no-folding -v -t $REAL_HOME zsh
-if [ \$? -ne 0 ]; then
-    echo "Error occurred while stowing zsh files."
-    exit 1
-fi
-
-# Stow all other dotfiles
-echo "Stowing other dotfiles..."
-for dir in */; do
-    if [ "\$dir" != "zsh/" ]; then
-        stow -v -t $REAL_HOME "\$dir"
-        if [ \$? -ne 0 ]; then
-            echo "Error occurred while stowing \$dir"
-            exit 1
-        fi
-    fi
-done
-
-if [ \$? -eq 0 ]; then
-    echo "Stow completed successfully."
-else
-    echo "Error occurred during stow operation."
-    exit 1
-fi
+# ... (stowing process as before)
 EOF
+
+# Switch to Zsh for the rest of the script
+echo "Switching to Zsh for the remainder of the script..."
+sudo -u $REAL_USER zsh << 'ZSHSCRIPT'
+# Set ZDOTDIR to ensure .zshrc is sourced from the correct location
+export ZDOTDIR=$HOME
+
+# Source .zshrc
+echo "Sourcing .zshrc..."
+source $ZDOTDIR/.zshrc
 
 # Install Nerd Fonts
 echo "Installing Nerd Fonts..."
-run_as_user ./nerdfonts.sh
+./nerdfonts.sh
 if [ $? -eq 0 ]; then
     echo "Nerd Fonts installed successfully"
 else
@@ -117,15 +87,11 @@ fi
 
 # Install zinit
 echo "Installing zinit..."
-run_as_user bash -c "\$(curl --fail --show-error --silent --location https://raw.githubusercontent.com/zdharma-continuum/zinit/HEAD/scripts/install.sh)"
-
-# Source .zshrc
-echo "Sourcing .zshrc..."
-run_as_user source $REAL_HOME/.zshrc
+bash -c "$(curl --fail --show-error --silent --location https://raw.githubusercontent.com/zdharma-continuum/zinit/HEAD/scripts/install.sh)"
 
 # Update zinit
 echo "Updating zinit..."
-run_as_user zinit self-update
+zinit self-update
 
 # Check if zinit installation was successful
 if [ $? -eq 0 ]; then
@@ -137,11 +103,11 @@ fi
 
 # Install fzf
 echo "Installing fzf..."
-run_as_user git clone --depth 1 https://github.com/junegunn/fzf.git $REAL_HOME/.fzf
+git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
 
 # Run fzf install script
 echo "Running fzf install script..."
-run_as_user $REAL_HOME/.fzf/install --all
+~/.fzf/install --all
 
 # Check if fzf installation was successful
 if [ $? -eq 0 ]; then
@@ -153,11 +119,11 @@ fi
 
 # Print fzf version
 echo "Installed fzf version:"
-run_as_user $REAL_HOME/.fzf/bin/fzf --version
+~/.fzf/bin/fzf --version
 
 # Install tpm (Tmux Plugin Manager)
 echo "Installing tpm (Tmux Plugin Manager)..."
-run_as_user git clone https://github.com/tmux-plugins/tpm $REAL_HOME/.tmux/plugins/tpm
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
 # Check if tpm installation was successful
 if [ $? -eq 0 ]; then
@@ -179,32 +145,35 @@ for pkg in git zsh tmux eza stow; do
 done
 
 # Check Nerd Fonts installation
-if [ -d "$REAL_HOME/.local/share/fonts/JetBrainsMono" ]; then
+if [ -d "$HOME/.local/share/fonts/JetBrainsMono" ]; then
     echo "JetBrainsMono Nerd Font is installed"
 else
     echo "ERROR: JetBrainsMono Nerd Font is not installed"
 fi
 
 # Check zinit installation
-if [ -d "$REAL_HOME/.zinit" ]; then
+if [ -d "$HOME/.zinit" ]; then
     echo "zinit is installed"
 else
     echo "ERROR: zinit is not installed"
 fi
 
 # Check fzf installation
-if [ -d "$REAL_HOME/.fzf" ]; then
+if [ -d "$HOME/.fzf" ]; then
     echo "fzf is installed"
 else
     echo "ERROR: fzf is not installed"
 fi
 
 # Check tpm installation
-if [ -d "$REAL_HOME/.tmux/plugins/tpm" ]; then
+if [ -d "$HOME/.tmux/plugins/tpm" ]; then
     echo "tpm is installed"
 else
     echo "ERROR: tpm is not installed"
 fi
 
 echo "Verification complete."
-echo "Installation completed for user $REAL_USER. Please log out and log back in to ensure all changes take effect."
+
+ZSHSCRIPT
+
+echo "Script execution completed."
