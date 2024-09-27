@@ -49,11 +49,13 @@ tmux -V
 eza --version
 stow --version
 
+
+# Define backup_file function (this should be earlier in the script)
 backup_file() {
     local file=$1
     if [ -e "$REAL_HOME/$file" ]; then
         echo "Backing up existing $file"
-        run_as_user mv "$REAL_HOME/$file" "$REAL_HOME/$file.backup.$(date +%Y%m%d%H%M%S)"
+        mv "$REAL_HOME/$file" "$REAL_HOME/$file.backup.$(date +%Y%m%d%H%M%S)"
     fi
 }
 
@@ -66,26 +68,34 @@ echo "Contents of current directory:"
 ls -la
 
 echo "Backing up existing files if necessary..."
-$(declare -f backup_file)
 backup_file ".zshrc"
 backup_file ".tmux.conf"
 backup_file ".config/nvim/init.vim"
 
+echo "Removing existing .zshrc if it exists..."
+[ -f "$REAL_HOME/.zshrc" ] && rm "$REAL_HOME/.zshrc"
+
 echo "Running stow..."
 
-# Stow zsh separately with --no-folding
-if [ -d "zsh" ]; then
-    echo "Stowing zsh files..."
-    stow --no-folding -v -t $REAL_HOME zsh
-    if [ \$? -ne 0 ]; then
-        echo "Error occurred while stowing zsh files."
-        exit 1
-    fi
+# Stow zsh folder (which contains .zshrc)
+echo "Stowing zsh files..."
+stow --no-folding -v -t $REAL_HOME zsh
+if [ \$? -ne 0 ]; then
+    echo "Error occurred while stowing zsh files."
+    exit 1
 fi
 
 # Stow all other dotfiles
 echo "Stowing other dotfiles..."
-stow -v -t $REAL_HOME \$(ls -d */ | grep -v '^zsh/\$')
+for dir in */; do
+    if [ "\$dir" != "zsh/" ]; then
+        stow -v -t $REAL_HOME "\$dir"
+        if [ \$? -ne 0 ]; then
+            echo "Error occurred while stowing \$dir"
+            exit 1
+        fi
+    fi
+done
 
 if [ \$? -eq 0 ]; then
     echo "Stow completed successfully."
