@@ -1,5 +1,10 @@
 # Install dotfiles
 
+chmod +x install.sh
+chmod +x nerdfonts.sh
+
+sudo ./install.sh
+
 ## Requirements:
 
 Install git, zsh and wget/curl via cli
