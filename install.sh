@@ -99,3 +99,44 @@ else
     echo "Error occurred while installing tpm"
     exit 1
 fi
+
+echo "Verifying installations..."
+
+# Check apt installed packages
+for pkg in git zsh tmux eza stow; do
+    if command -v $pkg > /dev/null; then
+        echo "$pkg is installed"
+    else
+        echo "ERROR: $pkg is not installed"
+    fi
+done
+
+# Check Nerd Fonts installation
+if [ -d "$HOME/.local/share/fonts/JetBrainsMono" ]; then
+    echo "JetBrainsMono Nerd Font is installed"
+else
+    echo "ERROR: JetBrainsMono Nerd Font is not installed"
+fi
+
+# Check zinit installation
+if [ -d "$HOME/.zinit" ]; then
+    echo "zinit is installed"
+else
+    echo "ERROR: zinit is not installed"
+fi
+
+# Check fzf installation
+if [ -d "$HOME/.fzf" ]; then
+    echo "fzf is installed"
+else
+    echo "ERROR: fzf is not installed"
+fi
+
+# Check tpm installation
+if [ -d "$HOME/.tmux/plugins/tpm" ]; then
+    echo "tpm is installed"
+else
+    echo "ERROR: tpm is not installed"
+fi
+
+echo "Verification complete."
