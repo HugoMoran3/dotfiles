@@ -7,7 +7,7 @@ if [ "$EUID" -ne 0 ]
 fi
 
 # Update package lists
-apt update
+apt update -y
 
 # Add eza repository
 echo "Adding eza repository..."
@@ -17,7 +17,7 @@ echo "deb [signed-by=/etc/apt/keyrings/gierens.gpg] http://deb.gierens.de stable
 chmod 644 /etc/apt/keyrings/gierens.gpg /etc/apt/sources.list.d/gierens.list
 
 # Update package lists again to include the new repository
-apt update
+apt update -y
 
 # Install dependencies
 apt install -y git zsh tmux eza stow
@@ -41,6 +41,8 @@ stow --version
 cd dotfiles/
 stow .
 cd ..
+
+zsh
 
 # Install Nerd Fonts
 echo "Installing Nerd Fonts..."
