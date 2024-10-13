@@ -48,6 +48,7 @@ Install Neovim
     curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
     sudo rm -rf /opt/nvim
     sudo tar -C /opt -xzf nvim-linux64.tar.gz
+    sudo rm nvim-linux64.tar.gz
 
 Nerd Font - [Jet Brains Mono](https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/JetBrainsMono.zip)
     
