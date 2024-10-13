@@ -58,7 +58,7 @@ Nerd Font - [Jet Brains Mono](https://github.com/ryanoasis/nerd-fonts/releases/d
 
  cd dotfiles
  
-stow -v -t ~/ zsh
-stow -v -t ~/ tmux
+stow -t ~/ zsh
+stow -t ~/ tmux
 
 source ~/.zshrc
