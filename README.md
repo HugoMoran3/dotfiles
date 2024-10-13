@@ -56,9 +56,10 @@ Nerd Font - [Jet Brains Mono](https://github.com/ryanoasis/nerd-fonts/releases/d
     
     3.) Run the command fc-cache -fv to manually rebuild the font cache
 
- cd dotfiles
+     cd dotfiles
  
-stow -t ~/ zsh
-stow -t ~/ tmux
+     stow nvim
+     stow -t ~/ zsh
+     stow -t ~/ tmux
 
-source ~/.zshrc
+    source ~/.zshrc
