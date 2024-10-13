@@ -103,5 +103,8 @@ fi
 # Go.nvim 
 export PATH=$PATH:$GOPATH/bin
 
+# Add Neovim PATH
+export PATH="$PATH:/opt/nvim-linux64/bin"
+
 # Cheat.sh
 #fpath=(~/.zsh.d/ $fpath)

@@ -89,6 +89,10 @@ fi
 echo "Installing zinit..."
 bash -c "$(curl --fail --show-error --silent --location https://raw.githubusercontent.com/zdharma-continuum/zinit/HEAD/scripts/install.sh)"
 
+# Source .zshrc
+echo "Sourcing .zshrc..."
+source $ZDOTDIR/.zshrc
+
 # Update zinit
 echo "Updating zinit..."
 zinit self-update
