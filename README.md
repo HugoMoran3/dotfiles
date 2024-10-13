@@ -1,5 +1,10 @@
 # Install dotfiles
 
+chmod +x install.sh
+chmod +x nerdfonts.sh
+
+sudo ./install.sh
+
 ## Requirements:
 
 Install git, zsh and wget/curl via cli
@@ -51,3 +56,9 @@ Nerd Font - [Jet Brains Mono](https://github.com/ryanoasis/nerd-fonts/releases/d
     
     3.) Run the command fc-cache -fv to manually rebuild the font cache
 
+ cd dotfiles
+ 
+stow -v -t ~/ zsh
+stow -v -t ~/ tmux
+
+source ~/.zshrc
