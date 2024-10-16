@@ -29,10 +29,6 @@ https://github.com/zdharma-continuum/zinit](https://github.com/zdharma-continuum
     zinit self-update
 
 
-NvChad
-https://nvchad.com/docs/quickstart/install/
-
-    git clone https://github.com/NvChad/starter ~/.config/nvim && nvim
 FZF
 
 Tmux
@@ -46,7 +42,13 @@ Tmux Plugin Manager
     tmux source ~/.tmux.conf
 
 In Tmux press `prefix + I` (capital i, as in Install) to fetch the plugin.
-  
+
+Install Neovim
+
+    curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
+    sudo rm -rf /opt/nvim
+    sudo tar -C /opt -xzf nvim-linux64.tar.gz
+    sudo rm nvim-linux64.tar.gz
 
 Nerd Font - [Jet Brains Mono](https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/JetBrainsMono.zip)
     
@@ -56,9 +58,10 @@ Nerd Font - [Jet Brains Mono](https://github.com/ryanoasis/nerd-fonts/releases/d
     
     3.) Run the command fc-cache -fv to manually rebuild the font cache
 
- cd dotfiles
+     cd dotfiles
  
-stow -v -t ~/ zsh
-stow -v -t ~/ tmux
+     stow nvim
+     stow -t ~/ zsh
+     stow -t ~/ tmux
 
-source ~/.zshrc
+    source ~/.zshrc
