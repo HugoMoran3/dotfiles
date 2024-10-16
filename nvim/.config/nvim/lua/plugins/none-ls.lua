@@ -2,7 +2,7 @@ return {
 	{
 		"nvimtools/none-ls.nvim",
 		opts = function()
-			return require("plugins.configs.null-ls")
+			return require("configs.null-ls")
 		end,
 	},
 }

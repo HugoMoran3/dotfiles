@@ -100,7 +100,7 @@ if command -v tmux &> /dev/null && [ -z "$TMUX" ]; then
   tmux attach-session -t default || tmux new-session -s default
 fi
 
-# Go.nvim 
+# Go.nvim
 export PATH=$PATH:$GOPATH/bin
 
 # Cheat.sh
