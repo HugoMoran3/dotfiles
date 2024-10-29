@@ -1,6 +1,7 @@
 return {
-	{
-		"tpope/vim-sleuth",
-		event = "VeryLazy",
-	},
+    {
+        "tpope/vim-sleuth",
+        enabled = true,
+        event = "VeryLazy",
+    },
 }
