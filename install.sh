@@ -20,6 +20,11 @@ EOF
 # Update package lists
 apt update -y
 
+# Install Neovim from source
+curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
+sudo rm -rf /opt/nvim
+sudo tar -C /opt -xzf nvim-linux64.tar.gz
+
 # Add eza repository
 echo "Adding eza repository..."
 mkdir -p /etc/apt/keyrings
@@ -147,6 +152,13 @@ for pkg in git zsh tmux eza stow; do
         echo "ERROR: $pkg is not installed"
     fi
 done
+
+# Check Neovim installation
+if [ -d "$HOME/.local/bin/nvim" ]; then
+    echo "Neovim is installed"
+else
+    echo "ERROR: Neovim is not installed"
+fi
 
 # Check Nerd Fonts installation
 if [ -d "$HOME/.local/share/fonts/JetBrainsMono" ]; then
