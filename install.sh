@@ -121,19 +121,34 @@ eza --version
 stow --version
 
 
-# Define backup_file function (this should be earlier in the script)
-backup_file() {
-    local file=$1
-    if [ -e "$REAL_HOME/$file" ]; then
-        echo "Backing up existing $file"
-        mv "$REAL_HOME/$file" "$REAL_HOME/$file.backup.$(date +%Y%m%d%H%M%S)"
-    fi
-}
+# Before stowing, backup existing files
+echo "Backing up existing configuration files..."
+backup_file ".config/nvim"
+backup_file ".zshrc"
+backup_file ".tmux.conf"
 
 # Stow dotfiles
-stow nvim
-stow -t ~/ zsh
-stow -t ~/ tmux
+echo "Stowing dotfiles..."
+if stow nvim; then
+    echo "Successfully stowed nvim configuration"
+else
+    echo "Error stowing nvim configuration"
+    exit 1
+fi
+
+if stow -t ~/ zsh; then
+    echo "Successfully stowed zsh configuration"
+else
+    echo "Error stowing zsh configuration"
+    exit 1
+fi
+
+if stow -t ~/ tmux; then
+    echo "Successfully stowed tmux configuration"
+else
+    echo "Error stowing tmux configuration"
+    exit 1
+fi
 
 # Switch to Zsh for the rest of the script
 echo "Switching to Zsh for the remainder of the script..."
