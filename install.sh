@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # Check if script is run with sudo
-if [ "$EUID" -ne 0 ]
-  then echo "Please run as root or with sudo"
-  exit
+if [ "$EUID" -ne 0 ]; then
+    echo "Please run as root or with sudo"
+    exit
 fi
 
 # Get the actual user's home directory
@@ -17,26 +17,92 @@ run_as_user() {
 EOF
 }
 
-# Update package lists
-apt update -y
+# Define backup_file function
+backup_file() {
+    local file=$1
+    if [ -e "$REAL_HOME/$file" ]; then
+        echo "Backing up existing $file"
+        mv "$REAL_HOME/$file" "$REAL_HOME/$file.backup.$(date +%Y%m%d%H%M%S)"
+    fi
+}
 
-# Install Neovim with pre-built binary
-curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
-sudo rm -rf /opt/nvim
-sudo tar -C /opt -xzf nvim-linux64.tar.gz
+# Load OS information
+. /etc/os-release
 
-# Add eza repository
-echo "Adding eza repository..."
-mkdir -p /etc/apt/keyrings
-curl -fsSL https://raw.githubusercontent.com/eza-community/eza/main/deb.asc | gpg --dearmor -o /etc/apt/keyrings/gierens.gpg
-echo "deb [signed-by=/etc/apt/keyrings/gierens.gpg] http://deb.gierens.de stable main" | tee /etc/apt/sources.list.d/gierens.list
-chmod 644 /etc/apt/keyrings/gierens.gpg /etc/apt/sources.list.d/gierens.list
+# OS-specific installation - PRETTY_NAME variable is from the os-release information
+echo "Detected OS: $PRETTY_NAME"
+case $ID in
+    ubuntu|debian)
+        echo "Installing for Ubuntu/Debian..."
+        
+        # Update package lists
+        apt update -y
 
-# Update package lists again to include the new repository
-apt update -y
+        # Install Neovim with pre-built binary
+        curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
+        sudo rm -rf /opt/nvim
+        sudo tar -C /opt -xzf nvim-linux64.tar.gz
 
-# Install dependencies
-apt install -y git zsh tmux eza stow
+        # Add eza repository
+        echo "Adding eza repository..."
+        mkdir -p /etc/apt/keyrings
+        curl -fsSL https://raw.githubusercontent.com/eza-community/eza/main/deb.asc | gpg --dearmor -o /etc/apt/keyrings/gierens.gpg
+        echo "deb [signed-by=/etc/apt/keyrings/gierens.gpg] http://deb.gierens.de stable main" | tee /etc/apt/sources.list.d/gierens.list
+        chmod 644 /etc/apt/keyrings/gierens.gpg /etc/apt/sources.list.d/gierens.list
+
+        # Update package lists again
+        apt update -y
+
+        # Install dependencies
+        apt install -y git zsh tmux eza stow
+
+        
+        # Install Nerd Fonts
+        echo "Installing Nerd Fonts..."
+        ./nerdfonts.sh
+        if [ $? -eq 0 ]; then
+            echo "Nerd Fonts installed successfully"
+        else
+            echo "Error occurred while installing Nerd Fonts"
+            exit 1
+        fi
+
+        ;;
+
+    arch|endeavouros)
+        echo "Installing for Arch/EndeavourOS..."
+        
+        # Update package lists
+        pacman -Syu --noconfirm
+
+        # List of packages to be installed
+        PKGS=("eza" "zsh" "tmux" "git" "neovim" "fzf" "stow" "ttf-jetbrains-mono-nerd ")
+
+        # Install dependencies
+        pacman -S --noconfirm "{$PKGS[@]}"
+        ;;
+
+    fedora)
+        echo "Installing for Fedora..."
+        
+        # Update package lists
+        dnf update -y
+
+        # Install Neovim with pre-built binary
+        curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
+        sudo rm -rf /opt/nvim
+        sudo tar -C /opt -xzf nvim-linux64.tar.gz
+
+        # Install dependencies
+        dnf install -y git zsh tmux eza stow
+        ;;
+
+    *)
+        echo "Unsupported distribution: $PRETTY_NAME"
+        echo "This script supports Ubuntu, Debian, Arch, EndeavourOS, and Fedora"
+        exit 1
+        ;;
+esac
 
 # Check if installation was successful
 if [ $? -eq 0 ]; then
@@ -65,10 +131,9 @@ backup_file() {
 }
 
 # Stow dotfiles
-echo "Stowing dotfiles..."
-run_as_user << EOF
-# ... (stowing process as before)
-EOF
+stow nvim
+stow -t ~/ zsh
+stow -t ~/ tmux
 
 # Switch to Zsh for the rest of the script
 echo "Switching to Zsh for the remainder of the script..."
@@ -79,16 +144,6 @@ export ZDOTDIR=$HOME
 # Source .zshrc
 echo "Sourcing .zshrc..."
 source $ZDOTDIR/.zshrc
-
-# Install Nerd Fonts
-echo "Installing Nerd Fonts..."
-./nerdfonts.sh
-if [ $? -eq 0 ]; then
-    echo "Nerd Fonts installed successfully"
-else
-    echo "Error occurred while installing Nerd Fonts"
-    exit 1
-fi
 
 # Install zinit
 echo "Installing zinit..."
