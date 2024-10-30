@@ -17,68 +17,73 @@ run_as_user() {
 EOF
 }
 
-# Function to restore backed up files
-restore_backup() {
-    local file=$1
-    local backup=$(ls -t $REAL_HOME/$file.backup.* 2>/dev/null | head -n1)
-    if [ -n "$backup" ]; then
-        echo "Restoring $file from backup"
-        run_as_user mv "$backup" "$REAL_HOME/$file"
-    else
-        echo "No backup found for $file"
-    fi
-}
+echo "Starting uninstallation process..."
 
-echo "Uninstalling dotfiles and related software..."
-
-# Unstow dotfiles
-echo "Unstowing dotfiles..."
-run_as_user << EOF
-cd $PWD
-stow -D -t $REAL_HOME *
-EOF
-
-# Restore backed up files
-echo "Restoring original configuration files..."
-restore_backup ".zshrc"
-restore_backup ".tmux.conf"
-restore_backup ".config/nvim/init.vim"
-
-# Uninstall Nerd Fonts
-echo "Removing Nerd Fonts..."
-run_as_user rm -rf $REAL_HOME/.local/share/fonts/JetBrainsMono
-
-# Uninstall zinit
-echo "Removing zinit..."
-run_as_user rm -rf $REAL_HOME/.zinit
-
-# Uninstall fzf
-echo "Removing fzf..."
-run_as_user $REAL_HOME/.fzf/uninstall --all
-run_as_user rm -rf $REAL_HOME/.fzf
-
-# Remove tpm (Tmux Plugin Manager)
-echo "Removing tpm..."
-run_as_user rm -rf $REAL_HOME/.tmux/plugins/tpm
+# Remove Neovim
+echo "Removing Neovim..."
+rm -rf /opt/nvim
+rm -f /usr/local/bin/nvim
 
 # Remove eza repository
 echo "Removing eza repository..."
-rm -f /etc/apt/sources.list.d/gierens.list
 rm -f /etc/apt/keyrings/gierens.gpg
+rm -f /etc/apt/sources.list.d/gierens.list
 
-# Uninstall packages
-echo "Uninstalling packages..."
-apt remove -y eza stow
+# Update package lists
+apt update -y
+
+# Remove installed packages
+echo "Removing installed packages..."
+apt remove -y git zsh tmux eza stow
 apt autoremove -y
 
-echo "Uninstallation complete. The following actions were taken:"
-echo "1. Dotfiles were unstowed"
-echo "2. Original configuration files were restored (if backups were found)"
-echo "3. Nerd Fonts, zinit, fzf, and tpm were removed"
-echo "4. The eza repository was removed"
-echo "5. eza and stow packages were uninstalled"
+# Remove user-specific installations (run as real user)
+echo "Removing user-specific installations..."
+run_as_user << 'EOF'
+    # Remove zinit
+    rm -rf ~/.zinit
+
+    # Remove fzf
+    rm -rf ~/.fzf
+    # Remove fzf config from ~/.bashrc and ~/.zshrc
+    sed -i '/^# BEGIN fzf/,/^# END fzf/d' ~/.bashrc 2>/dev/null
+    sed -i '/^# BEGIN fzf/,/^# END fzf/d' ~/.zshrc 2>/dev/null
+
+    # Remove tpm and tmux plugins
+    rm -rf ~/.tmux/plugins
+
+    # Remove Nerd Fonts
+    echo "Removing Nerd Fonts..."
+    rm -rf ~/.local/share/fonts/JetBrainsMono
+    # Update font cache
+    fc-cache -f -v
+EOF
+
+# Restore backed up configuration files if they exist
+echo "Restoring backup files if they exist..."
+for file in "$REAL_HOME"/*.backup.*; do
+    if [ -f "$file" ]; then
+        original_file=$(echo "$file" | sed 's/\.backup\.[0-9]\{14\}$//')
+        echo "Restoring $original_file"
+        mv "$file" "$original_file"
+    fi
+done
+
+# Reset shell to bash if zsh was default
+if [ "$(getent passwd $REAL_USER | cut -d: -f7)" = "/usr/bin/zsh" ]; then
+    echo "Resetting default shell to bash..."
+    chsh -s /bin/bash $REAL_USER
+fi
+
+echo "Uninstallation complete. The following changes were made:"
+echo "1. Removed Neovim from /opt"
+echo "2. Removed eza repository and package"
+echo "3. Uninstalled git, zsh, tmux, eza, and stow"
+echo "4. Removed zinit configuration"
+echo "5. Removed fzf and its configuration"
+echo "6. Removed tmux plugin manager and plugins"
+echo "7. Removed JetBrainsMono Nerd Font"
+echo "8. Restored any backed up configuration files"
+echo "9. Reset default shell to bash (if necessary)"
 echo ""
-echo "Note: git, zsh, and tmux were not uninstalled as they may be used by other applications."
-echo "If you wish to remove these, please do so manually."
-echo ""
-echo "Please log out and log back in to ensure all changes take effect."
+echo "Note: You may need to restart your terminal for all changes to take effect."
