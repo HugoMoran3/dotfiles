@@ -87,3 +87,13 @@ echo "8. Restored any backed up configuration files"
 echo "9. Reset default shell to bash (if necessary)"
 echo ""
 echo "Note: You may need to restart your terminal for all changes to take effect."
+
+# Reset shell to bash if zsh was default
+if [ "$(getent passwd $REAL_USER | cut -d: -f7)" = "/usr/bin/zsh" ]; then
+    echo "Resetting default shell to bash..."
+    chsh -s /bin/bash $REAL_USER
+    
+    # Change current shell to bash
+    echo "Changing current shell to bash..."
+    exec bash
+fi
