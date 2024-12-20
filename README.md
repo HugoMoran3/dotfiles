@@ -1,9 +1,22 @@
 # Install dotfiles
 
+Steps
 chmod +x install.sh
 chmod +x nerdfonts.sh
 
 sudo ./install.sh
+
+sudo rm ~/.zshrc
+
+stow nvim
+stow -t ~/ zsh
+stow -t ~/ tmux
+
+tmux source ~/.tmux.conf
+
+In Tmux press `prefix + I` (capital i, as in Install) to fetch the plugin.
+
+source ~/.zshrc
 
 ## Requirements:
 
@@ -42,26 +55,3 @@ Tmux Plugin Manager
     tmux source ~/.tmux.conf
 
 In Tmux press `prefix + I` (capital i, as in Install) to fetch the plugin.
-
-Install Neovim
-
-    curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
-    sudo rm -rf /opt/nvim
-    sudo tar -C /opt -xzf nvim-linux64.tar.gz
-    sudo rm nvim-linux64.tar.gz
-
-Nerd Font - [Jet Brains Mono](https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/JetBrainsMono.zip)
-    
-    1.) Download a Nerd Font
-    
-    2.) Unzip and copy to ~/.fonts
-    
-    3.) Run the command fc-cache -fv to manually rebuild the font cache
-
-     cd dotfiles
- 
-     stow nvim
-     stow -t ~/ zsh
-     stow -t ~/ tmux
-
-    source ~/.zshrc
