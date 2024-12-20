@@ -28,6 +28,9 @@ zinit light-mode for \
 
 ### End of Zinit's installer chunk
 
+# Add fzf to path
+export PATH="$HOME/.fzf/bin:$PATH"
+
 # Add in Powerlevel10k
 zinit ice depth=1; zinit light romkatv/powerlevel10k
 
