@@ -69,6 +69,8 @@ alias pacman='sudo pacman'
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
+# sops
+export SOPS_AGE_KEY_FILE=$HOME/.sops/key.txt
 
 # Keybindings
 #bindkey -e
@@ -107,7 +109,7 @@ fi
 export PATH=$PATH:$GOPATH/bin
 
 # Add Neovim PATH
-export PATH="$PATH:/opt/nvim-linux64/bin"
+#export PATH="$PATH:/opt/nvim-linux64/bin"
 
 # Cheat.sh
 #fpath=(~/.zsh.d/ $fpath)
