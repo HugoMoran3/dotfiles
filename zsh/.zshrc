@@ -113,3 +113,6 @@ export PATH=$PATH:$GOPATH/bin
 
 # Cheat.sh
 #fpath=(~/.zsh.d/ $fpath)
+
+autoload -U +X bashcompinit && bashcompinit
+complete -o nospace -C /usr/bin/tofu tofu
