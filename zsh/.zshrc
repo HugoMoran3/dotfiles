@@ -69,9 +69,6 @@ alias pacman='sudo pacman'
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
-# sops
-export SOPS_AGE_KEY_FILE=$HOME/.sops/key.txt
-
 # Keybindings
 #bindkey -e
 bindkey '^p' history-search-backward
@@ -98,12 +95,11 @@ zstyle ':completion:*' menu no
 zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
 zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'ls --color $realpath'
 
-# Shell integrations
-source <(fzf --zsh)
-
 if command -v tmux &> /dev/null && [ -z "$TMUX" ]; then
   tmux attach-session -t default || tmux new-session -s default
 fi
+
+alias cd="z"
 
 # Go.nvim
 export PATH=$PATH:$GOPATH/bin
@@ -116,3 +112,7 @@ export PATH=$PATH:$GOPATH/bin
 
 autoload -U +X bashcompinit && bashcompinit
 complete -o nospace -C /usr/bin/tofu tofu
+
+# Shell integrations
+eval "$(fzf --zsh)"
+eval "$(zoxide init zsh)"
