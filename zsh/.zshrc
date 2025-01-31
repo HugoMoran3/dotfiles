@@ -61,7 +61,7 @@ alias lf='eza -lF --color=always | grep -v /'
 alias lh='eza -dl .* --group-directories-first'
 alias ll='eza -al --group-directories-first'
 alias lt='eza -al --color=always --sort=size | grep -v /'
-alias ls='eza -al --sort=modified'
+alias ls='eza -al --sort=name --icons'
 
 # Pacman
 alias pacman='sudo pacman'
