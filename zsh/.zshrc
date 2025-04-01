@@ -1,9 +1,20 @@
+# Move this block to the very top, before the p10k instant prompt
+if [[ -n "$SSH_CONNECTION" && -z "$TMUX" ]]; then
+  if command -v tmux &> /dev/null && [ -z "$TMUX" ]; then
+    export TERM="xterm-256color"
+    tmux new-session -A -s default
+    exit 0
+  fi
+fi
+
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
+
+typeset -g POWERLEVEL9K_INSTANT_PROMPT=quiet
 
 ### Added by Zinit's installer
 if [[ ! -f $HOME/.local/share/zinit/zinit.git/zinit.zsh ]]; then
@@ -95,8 +106,11 @@ zstyle ':completion:*' menu no
 zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
 zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'ls --color $realpath'
 
-if command -v tmux &> /dev/null && [ -z "$TMUX" ]; then
-  tmux attach-session -t default || tmux new-session -s default
+# Auto-start tmux
+if [[ -n "$SSH_CONNECTION" && -z "$TMUX" ]]; then
+  if command -v tmux &> /dev/null; then
+    tmux new-session -A -s default
+  fi
 fi
 
 alias cd="z"
@@ -108,7 +122,9 @@ export PATH=$PATH:$GOPATH/bin
 #export PATH="$PATH:/opt/nvim-linux64/bin"
 
 # Cheat.sh
-#fpath=(~/.zsh.d/ $fpath)
+alias dockcheck="$HOME/.local/bin/dockcheck.sh"
+
+alias cscli="docker exec crowdsec cscli"
 
 autoload -U +X bashcompinit && bashcompinit
 complete -o nospace -C /usr/bin/tofu tofu
@@ -116,3 +132,5 @@ complete -o nospace -C /usr/bin/tofu tofu
 # Shell integrations
 eval "$(fzf --zsh)"
 eval "$(zoxide init zsh)"
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
