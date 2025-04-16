@@ -107,13 +107,16 @@ zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
 zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'ls --color $realpath'
 
 # Auto-start tmux
-if [[ -n "$SSH_CONNECTION" && -z "$TMUX" ]]; then
-  if command -v tmux &> /dev/null; then
-    tmux new-session -A -s default
-  fi
-fi
+# if [[ -n "$SSH_CONNECTION" && -z "$TMUX" ]]; then
+#   if command -v tmux &> /dev/null; then
+#     tmux new-session -A -s default
+#   fi
+# fi
 
 alias cd="z"
+
+alias dockdown="docker compose down"
+alias dockup="docker compose up -d"
 
 # Go.nvim
 export PATH=$PATH:$GOPATH/bin
@@ -121,7 +124,6 @@ export PATH=$PATH:$GOPATH/bin
 # Add Neovim PATH
 #export PATH="$PATH:/opt/nvim-linux64/bin"
 
-# Cheat.sh
 alias dockcheck="$HOME/.local/bin/dockcheck.sh"
 
 alias cscli="docker exec crowdsec cscli"
