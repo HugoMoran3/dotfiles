@@ -30,11 +30,15 @@ autoload -Uz _zinit
 
 # Load a few important annexes, without Turbo
 # (this is currently required for annexes)
-zinit light-mode for \
-    zdharma-continuum/zinit-annex-as-monitor \  
-    zdharma-continuum/zinit-annex-bin-gem-node \
-    zdharma-continuum/zinit-annex-patch-dl \
-    zdharma-continuum/zinit-annex-rust
+# zinit light-mode for \
+#     zdharma-continuum/zinit-annex-as-monitor \
+#     zdharma-continuum/zinit-annex-bin-gem-node \
+#     zdharma-continuum/zinit-annex-patch-dl \
+#     zdharma-continuum/zinit-annex-rust
+zinit light zdharma-continuum/zinit-annex-as-monitor
+zinit light zdharma-continuum/zinit-annex-bin-gem-node
+zinit light zdharma-continuum/zinit-annex-patch-dl
+zinit light zdharma-continuum/zinit-annex-rust
 
 ### End of Zinit's installer chunk
 
@@ -57,7 +61,6 @@ zinit snippet OMZP::sudo
 zinit snippet OMZP::archlinux
 zinit snippet OMZP::aws
 zinit snippet OMZP::kubectl
-zinit snippet OMZP::kubectx
 zinit snippet OMZP::command-not-found
 
 # Load completions
@@ -72,9 +75,6 @@ alias lh='eza -dl .* --group-directories-first'
 alias ll='eza -al --group-directories-first'
 alias lt='eza -al --color=always --sort=size | grep -v /'
 alias ls='eza -al --sort=name --icons'
-
-# Pacman
-alias pacman='sudo pacman'
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
@@ -112,16 +112,20 @@ zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'ls --color $realpath'
    fi
  fi
 
+# eza alias
 alias cd="z"
 
+# kubectl autocompletion
+source <(kubectl completion zsh)
+# helm
+source <(helm completion zsh)
+
+# docker compose alias
 alias dockdown="docker compose down"
 alias dockup="docker compose up -d"
 
 # Go.nvim
 export PATH=$PATH:$GOPATH/bin
-
-# Add Neovim PATH
-#export PATH="$PATH:/opt/nvim-linux64/bin"
 
 alias dockcheck="$HOME/.local/bin/dockcheck.sh"
 
@@ -135,3 +139,5 @@ eval "$(fzf --zsh)"
 eval "$(zoxide init zsh)"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
