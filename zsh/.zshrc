@@ -105,12 +105,31 @@ zstyle ':completion:*' menu no
 zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
 zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'ls --color $realpath'
 
+export FZF_DEFAULT_OPTS="--height=40% --layout=reverse --border"
+
 # Auto-start tmux
  if [[ -n "$SSH_CONNECTION" && -z "$TMUX" ]]; then
    if command -v tmux &> /dev/null; then
      tmux new-session -A -s default
    fi
  fi
+
+# fzf functions
+fzf-vim-file() {
+  local file
+  file=$(fzf --query="$1" --select-1 --exit-0 --preview 'bat --style=numbers --color=always {} || head -100 {}')
+  [[ -n "$file" ]] && vim "$file"
+}
+
+fzf-cd-file-dir() {
+  local file
+  file=$(fzf --query="$1" --select-1 --exit-0 --preview 'bat --style=numbers --color=always {} || head -100 {}')
+  [[ -n "$file" ]] && cd "$(dirname "$file")"
+}
+
+# fzf functions keybindings
+bindkey -s '^o' 'fzf-vim-file\n'
+bindkey -s '\eo' 'fzf-cd-file-dir\n'
 
 # eza alias
 alias cd="z"
