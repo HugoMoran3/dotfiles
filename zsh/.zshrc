@@ -48,20 +48,19 @@ export PATH="$HOME/.fzf/bin:$PATH"
 # Add in Powerlevel10k
 zinit ice depth=1; zinit light romkatv/powerlevel10k
 
-# Add in zsh plugins
+# zinit zsh plugins
 zinit light zsh-users/zsh-syntax-highlighting
 zinit light zsh-users/zsh-completions
 zinit light zsh-users/zsh-autosuggestions
 zinit light Aloxaf/fzf-tab
 
-
-# Add in snippets
+# zinit snippets (common ones only)
 zinit snippet OMZP::git
 zinit snippet OMZP::sudo
-zinit snippet OMZP::archlinux
 zinit snippet OMZP::aws
-zinit snippet OMZP::kubectl
 zinit snippet OMZP::command-not-found
+zinit snippet OMZP::archlinux
+zinit snippet OMZP::kubectl
 
 # Load completions
 autoload -Uz compinit && compinit
@@ -134,21 +133,11 @@ bindkey -s '\eo' 'fzf-cd-file-dir\n'
 # eza alias
 alias cd="z"
 
-# kubectl autocompletion
-source <(kubectl completion zsh)
-# helm
-source <(helm completion zsh)
-
-# docker compose alias
-alias dockdown="docker compose down"
-alias dockup="docker compose up -d"
-
 # Go.nvim
 export PATH=$PATH:$GOPATH/bin
 
-alias dockcheck="$HOME/.local/bin/dockcheck.sh"
-
-alias cscli="docker exec crowdsec cscli"
+# bat alias
+BAT_THEME="Catppuccin Mocha"
 
 autoload -U +X bashcompinit && bashcompinit
 complete -o nospace -C /usr/bin/tofu tofu
@@ -159,4 +148,7 @@ eval "$(zoxide init zsh)"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+
+[[ -f ~/arch.zsh ]] && source ~/arch.zsh
+[[ -f ~/ubuntu.zsh ]] && source ~/ubuntu.zsh
+[[ -f ~/kube.zsh ]] && source ~/kube.zsh
