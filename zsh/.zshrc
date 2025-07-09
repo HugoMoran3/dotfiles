@@ -1,20 +1,3 @@
-# Move this block to the very top, before the p10k instant prompt
-# if [[ -n "$SSH_CONNECTION" && -z "$TMUX" ]]; then
-#   if command -v tmux &> /dev/null && [ -z "$TMUX" ]; then
-#     tmux new-session -A -s default
-#     exit 0
-#   fi
-# fi
-
-# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
-# Initialization code that may require console input (password prompts, [y/n]
-# confirmations, etc.) must go above this block; everything else may go below.
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
-
-typeset -g POWERLEVEL9K_INSTANT_PROMPT=quiet
-
 ### Added by Zinit's installer
 if [[ ! -f $HOME/.local/share/zinit/zinit.git/zinit.zsh ]]; then
     print -P "%F{33} %F{220}Installing %F{33}ZDHARMA-CONTINUUM%F{220} Initiative Plugin Manager (%F{33}zdharma-continuum/zinit%F{220})…%f"
@@ -28,13 +11,6 @@ source "$HOME/.local/share/zinit/zinit.git/zinit.zsh"
 autoload -Uz _zinit
 (( ${+_comps} )) && _comps[zinit]=_zinit
 
-# Load a few important annexes, without Turbo
-# (this is currently required for annexes)
-# zinit light-mode for \
-#     zdharma-continuum/zinit-annex-as-monitor \
-#     zdharma-continuum/zinit-annex-bin-gem-node \
-#     zdharma-continuum/zinit-annex-patch-dl \
-#     zdharma-continuum/zinit-annex-rust
 zinit light zdharma-continuum/zinit-annex-as-monitor
 zinit light zdharma-continuum/zinit-annex-bin-gem-node
 zinit light zdharma-continuum/zinit-annex-patch-dl
@@ -104,25 +80,27 @@ zstyle ':completion:*' menu no
 zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
 zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'ls --color $realpath'
 
-export FZF_DEFAULT_OPTS="--height=40% --layout=reverse --border"
 
-# Auto-start tmux
- if [[ -n "$SSH_CONNECTION" && -z "$TMUX" ]]; then
-   if command -v tmux &> /dev/null; then
-     tmux new-session -A -s default
-   fi
- fi
+# Auto-start tmux only if not already in a tmux session and terminal is ready
+if [[ -n "$SSH_CONNECTION" && -z "$TMUX" && -t 0 ]]; then
+  if command -v tmux &> /dev/null; then
+    # Check if terminal is properly initialized
+    if [[ "$TERM" != "dumb" ]]; then
+      tmux new-session -A -s default
+    fi
+  fi
+fi
 
 # fzf functions
 fzf-vim-file() {
   local file
-  file=$(fzf --query="$1" --select-1 --exit-0 --preview 'bat --style=numbers --color=always {} || head -100 {}')
+  file=$(fzf --query="$1" --select-1 --exit-0 --preview 'cat {}')
   [[ -n "$file" ]] && vim "$file"
 }
 
 fzf-cd-file-dir() {
   local file
-  file=$(fzf --query="$1" --select-1 --exit-0 --preview 'bat --style=numbers --color=always {} || head -100 {}')
+  file=$(fzf --query="$1" --select-1 --exit-0 --preview 'cat {}')
   [[ -n "$file" ]] && cd "$(dirname "$file")"
 }
 
@@ -136,18 +114,14 @@ alias cd="z"
 # Go.nvim
 export PATH=$PATH:$GOPATH/bin
 
-# bat alias
-BAT_THEME="Catppuccin Mocha"
-
 autoload -U +X bashcompinit && bashcompinit
 complete -o nospace -C /usr/bin/tofu tofu
+
+export FZF_DEFAULT_OPTS="--height 40% --layout reverse --border"
 
 # Shell integrations
 eval "$(fzf --zsh)"
 eval "$(zoxide init zsh)"
-
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
 
 [[ -f ~/arch.zsh ]] && source ~/arch.zsh
 [[ -f ~/ubuntu.zsh ]] && source ~/ubuntu.zsh
