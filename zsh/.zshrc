@@ -122,7 +122,7 @@ export PATH=$PATH:$GOPATH/bin
 autoload -U +X bashcompinit && bashcompinit
 complete -o nospace -C /usr/bin/tofu tofu
 
-export FZF_DEFAULT_tOPTS="--height 40% --layout reverse --border"
+export FZF_DEFAULT_OPTS="--height 40% --layout reverse --border"
 
 # Shell integrations
 eval "$(fzf --zsh)"
