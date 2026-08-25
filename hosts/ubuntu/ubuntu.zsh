@@ -1,8 +1,9 @@
 # Debian/Ubuntu specific configuration
 
 # docker compose alias
-alias dockdown="docker compose down"
-alias dockup="docker compose up -d"
+alias ddown="docker compose down"
+alias dup="docker compose up -d"
+alias dred="docker compose down && docker compose up -d"
 alias dockcheck="$HOME/.local/bin/dockcheck.sh"
 
 alias cscli="docker exec crowdsec cscli"
