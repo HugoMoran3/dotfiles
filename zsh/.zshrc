@@ -57,6 +57,10 @@ alias ls='eza -al --sort=name --icons'
 
 # Keybindings
 #bindkey -e
+bindkey '^[[1;5C' forward-word
+bindkey '^[[1;5D' backward-word
+bindkey '^[[5C' forward-word
+bindkey '^[[5D' backward-word
 bindkey '^p' history-search-backward
 bindkey '^n' history-search-forward
 bindkey '^[w' kill-region

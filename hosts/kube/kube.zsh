@@ -16,5 +16,6 @@ alias dockcheck="$HOME/.local/bin/dockcheck.sh"
 
 alias cscli="docker exec crowdsec cscli"
 
+alias next="$HOME/.local/bin/next"
 
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
